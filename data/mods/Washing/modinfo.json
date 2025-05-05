@@ -1,10 +1,10 @@
 [
   {
+    "id": "Washing",
     "type": "MOD_INFO",
-    "id": "Washing_Mod",
-    "name": "Washing Mod",
+    "name": "Washing",
     "authors": [ "GreyGoldFish" ],
-    "description": "Adds washing clothes for mood and infection prevention.",
+    "description": "Adds washing clothes to the Cataclysm.",
     "category": "content",
     "obsolete": false,
     "lua_api_version": 2,

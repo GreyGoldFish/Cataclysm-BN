@@ -1,0 +1,7 @@
+[
+    {
+    "id": "WASH",
+    "type": "item_action",
+    "name": { "str": "Wash an item" }
+    }
+]

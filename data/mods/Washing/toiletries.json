@@ -1,0 +1,18 @@
+[
+    {
+        "id": "washboard",
+        "type": "GENERIC",
+        "category": "tools_workshop",
+        "copy-from": "washboard",
+        "use_action": "WASH",
+        "name": { "str": "washboard" }
+    },
+    {
+        "type": "GENERIC",
+        "id": "wash_kit",
+        "category": "tools_workshop",
+        "copy-from": "wash_kit",
+        "use_action": "WASH",
+        "name": { "str": "washing kit" }
+    }
+]

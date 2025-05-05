@@ -4,3 +4,7 @@ gdebug.log_info("Washing: preload.")
 -- Actual implementation (function mod.iuse_function) will be defined later.
 
 local mod = game.mod_runtime[game.current_mod]
+
+game.iuse_functions["WASH"] = function(...)
+  return mod.iuse_wash_action(...)
+end

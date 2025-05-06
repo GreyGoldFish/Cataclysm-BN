@@ -14,6 +14,7 @@ local fragile_flag_id = JsonFlagId.new( "FRAGILE" )
 local washes_soft_flag_id = JsonFlagId.new( "WASHES_SOFT" )
 local washes_fragile_flag_id = JsonFlagId.new( "WASHES_FRAGILE" )
 local washes_hard_flag_id = JsonFlagId.new( "WASHES_HARD" )
+local mood_effect_id = EffectTypeId.new( "eff_clean_clothes_mood" )
 
 local wash_item = function (item)
     item:set_flag(wash_flag_id)
@@ -101,5 +102,54 @@ mod.iuse_wash_action = function( who, item, pos )
     -- item:ammo_consume( item:ammo_default(), 1 )
     -- TODO: Add check for tool running out of charges
 
-    return 1 -- Indicate action was taken
+    return 1
+end
+
+mod.is_worn_by_player = function(item)
+    local who = gapi.get_avatar():as_character()
+    if not who then return false end -- Ensure player exists
+    return who:is_worn(item) and item:is_armor()
+end
+
+mod.on_every_x_check_washed = function()
+    local who = gapi.get_avatar():as_character()
+    local all_items = who:all_items(true)
+    local total_worn_items = 0
+    local clean_items = 0
+
+    for _, item in ipairs(all_items) do
+        -- Skip items that are not worn or are not armor
+        if not mod.is_worn_by_player(item) or not item:is_armor() then
+            goto continue_loop
+        end
+        total_worn_items = total_worn_items + 1
+        if item:has_flag(wash_flag_id) then
+            clean_items = clean_items + 1
+        end
+        ::continue_loop::
+    end
+
+    local clean_percent = (total_worn_items > 0) and (clean_items / total_worn_items * 100) or 0
+    local mood_intensity = 0
+
+    if clean_items < 3 then
+        -- If less than 3 items are clean, mood effect is not applied
+        mood_intensity = 0
+    elseif clean_percent >= 67 then
+        mood_intensity = 3
+    elseif clean_percent >= 34 then
+        mood_intensity = 2
+    elseif clean_percent > 0 then
+        mood_intensity = 1
+    end
+
+    -- Apply or remove the effect based on calculated intensity
+    if mood_intensity > 0 then
+        -- Ensure the effect is active with the correct intensity.
+        -- Duration is ignored for permanent effects, but we need to provide one.
+        who:add_effect(mood_effect_id, TimeDuration.from_turns(1), nil, mood_intensity)
+    else
+        -- Remove the effect if intensity should be 0
+        who:remove_effect(mood_effect_id)
+    end
 end

@@ -1,0 +1,25 @@
+[
+      {
+        "type": "effect_type",
+        "id": "eff_clean_clothes_mood",
+        "name": [
+          "Clean Clothes (Low)",
+          "Clean Clothes (Medium)",
+          "Clean Clothes (High)"
+        ],
+        "max_intensity": 3,
+        "desc": [
+          "Feeling a bit better from some clean clothes.",
+          "Feeling noticeably better from your clean clothes.",
+          "Feeling quite refreshed by your clean clothes."
+        ],
+        "morale": "morale_high",
+        "base_mods": {
+          "morale": [ 1 ]
+        },
+        "scaling_mods": {
+          "morale": [ 1 ]
+        },
+        "permanent": true
+      }
+    ]

@@ -1,8 +1,23 @@
 [
     {
-    "id": "WASHED",
-    "type": "json_flag",
-    "context": [ "ARMOR" ],
-    "info": "This clothing has been <good>washed</good> and is clean."
+        "id": "WASHED",
+        "type": "json_flag",
+        "context": [ "ARMOR" ],
+        "info": "This item has been <good>washed</good> and is clean."
+    },
+    {
+        "id": "WASHES_SOFT",
+        "type": "json_flag",
+        "context": [ "GENERIC" ]
+    },
+    {
+        "id": "WASHES_FRAGILE",
+        "type": "json_flag",
+        "context": [ "GENERIC" ]
+    },
+    {
+        "id": "WASHES_HARD",
+        "type": "json_flag",
+        "context": [ "GENERIC" ]
     }
 ]

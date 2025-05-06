@@ -1,18 +1,34 @@
 [
     {
+        "id": "brush",
+        "type": "GENERIC",
+        "name": { "str": "scrub brush", "str_pl": "scrub brushes" },
+        "copy-from": "brush",
+        "use_action": "WASH",
+        "flags": [ "WASHES_HARD" ]
+    },
+    {
+        "id": "sponge",
+        "type": "GENERIC",
+        "name": { "str": "sponge" },
+        "copy-from": "sponge",
+        "use_action": "WASH",
+        "flags": [ "WASHES_SOFT" ]
+    },
+    {
         "id": "washboard",
         "type": "GENERIC",
-        "category": "tools_workshop",
+        "name": { "str": "washboard" },
         "copy-from": "washboard",
         "use_action": "WASH",
-        "name": { "str": "washboard" }
+        "flags": [ "WASHES_SOFT", "WASHES_HARD" ]
     },
     {
         "type": "GENERIC",
         "id": "wash_kit",
-        "category": "tools_workshop",
+        "name": { "str": "washing kit" },
         "copy-from": "wash_kit",
         "use_action": "WASH",
-        "name": { "str": "washing kit" }
+        "flags": [ "WASHES_SOFT", "WASHES_HARD", "WASHES_FRAGILE" ]
     }
 ]

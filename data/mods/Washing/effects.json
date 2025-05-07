@@ -1,17 +1,17 @@
 [
       {
         "type": "effect_type",
-        "id": "eff_clean_clothes_mood",
+        "id": "washed_clothes",
         "name": [
-          "Clean Clothes (Low)",
-          "Clean Clothes (Medium)",
-          "Clean Clothes (High)"
+          "Washed Clothes (Low)",
+          "Washed Clothes (Medium)",
+          "Washed Clothes (High)"
         ],
         "max_intensity": 3,
         "desc": [
-          "Feeling a bit better from some clean clothes.",
-          "Feeling noticeably better from your clean clothes.",
-          "Feeling quite refreshed by your clean clothes."
+          "Feeling a bit better from some washed clothes.",
+          "Feeling noticeably better from your washed clothes.",
+          "Feeling quite refreshed by your washed clothes."
         ],
         "morale": "morale_high",
         "base_mods": {
@@ -22,4 +22,4 @@
         },
         "permanent": true
       }
-    ]
+]

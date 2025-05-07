@@ -18,7 +18,6 @@ local mood_effect_id = EffectTypeId.new( "washed_clothes" )
 
 mod.wash_item = function (item)
     item:set_flag(wash_flag_id)
-    gapi.add_msg(locale.gettext("You wash the ") .. item:display_name(1) .. locale.gettext(".") )
     item:set_var_str("item_label", "<color_white>" .. item:tname(1, false, 0) .. locale.gettext(" (washed)") .. "</color>")
 end
 
@@ -62,33 +61,46 @@ mod.iuse_wash_action = function( who, item, pos )
         local ui = UiList.new()
         ui:title(locale.gettext("Select items to wash (toggle selection, Esc to cancel)"))
         
-        -- This map is rebuilt each time the UI is displayed.
-        -- It maps the current UI's 1-based index (eidx) to the item object.
         local current_loop_ui_key_to_item_map = {}
         local current_ui_key = 1
 
-        local function add_item_category_to_ui(items_list_for_category)
-            for _, item_obj_to_display in ipairs(items_list_for_category) do
-                local display_text = item_obj_to_display:display_name(1)
-                if selected_item_object_set[item_obj_to_display] then
-                    display_text = "    " .. display_text
+        -- Helper function to add an item to the UI and the map
+        local function add_item_to_ui(item_obj, is_selected_item)
+            local display_text = item_obj:display_name(1)
+            if is_selected_item then
+                display_text = "    " .. display_text
+            end
+            ui:add(current_ui_key, display_text)
+            current_loop_ui_key_to_item_map[current_ui_key] = item_obj
+            current_ui_key = current_ui_key + 1
+        end
+
+        -- Add unselected items from each category
+        local function process_category_for_unselected(items_list)
+            for _, item_obj in ipairs(items_list) do
+                if not selected_item_object_set[item_obj] then
+                    add_item_to_ui(item_obj, false)
                 end
-                ui:add(current_ui_key, display_text)
-                current_loop_ui_key_to_item_map[current_ui_key] = item_obj_to_display
-                current_ui_key = current_ui_key + 1
             end
         end
 
-        if item:has_flag( washes_soft_flag_id ) then
-            add_item_category_to_ui(soft_washable_items)
-        end
-        if item:has_flag( washes_fragile_flag_id ) then
-            add_item_category_to_ui(fragile_washable_items)
-        end
-        if item:has_flag( washes_hard_flag_id ) then
-            add_item_category_to_ui(hard_washable_items)
+        if item:has_flag( washes_soft_flag_id ) then process_category_for_unselected(soft_washable_items) end
+        if item:has_flag( washes_fragile_flag_id ) then process_category_for_unselected(fragile_washable_items) end
+        if item:has_flag( washes_hard_flag_id ) then process_category_for_unselected(hard_washable_items) end
+
+        -- Add selected items from each category (will appear at the bottom)
+        local function process_category_for_selected(items_list)
+            for _, item_obj in ipairs(items_list) do
+                if selected_item_object_set[item_obj] then
+                    add_item_to_ui(item_obj, true)
+                end
+            end
         end
 
+        if item:has_flag( washes_soft_flag_id ) then process_category_for_selected(soft_washable_items) end
+        if item:has_flag( washes_fragile_flag_id ) then process_category_for_selected(fragile_washable_items) end
+        if item:has_flag( washes_hard_flag_id ) then process_category_for_selected(hard_washable_items) end
+        
         local total_items_for_this_machine_type = current_ui_key - 1
 
         if total_items_for_this_machine_type == 0 then
@@ -98,16 +110,16 @@ mod.iuse_wash_action = function( who, item, pos )
             else
                  gapi.add_msg(locale.gettext("You have no items suitable for this washing method."))
             end
-            return 0 -- No items to display for this specific washing method
+            return 0
         end
 
         local done_option_key = current_ui_key
-        ui:add(done_option_key, locale.gettext("Done Washing Selected Items"))
+        ui:add(done_option_key, locale.gettext("Done"))
 
         local eidx = ui:query()
 
         if eidx < 1 then -- User closed the UI (e.g., Esc)
-            gapi.add_msg(locale.gettext("Washing canceled."))
+            gapi.add_msg(locale.gettext("Never mind."))
             return 0
         end
 
@@ -118,9 +130,8 @@ mod.iuse_wash_action = function( who, item, pos )
             end
 
             if #final_selected_items_list == 0 then
-                gapi.add_msg(locale.gettext("No items were selected to wash."))
+                gapi.add_msg(locale.gettext("Never mind."))
             else
-                gapi.add_msg(locale.gettext("Proceeding to wash selected items..."))
                 local items_washed_count = 0
                 for _, item_to_wash in ipairs(final_selected_items_list) do
                     mod.wash_item(item_to_wash)
@@ -130,7 +141,7 @@ mod.iuse_wash_action = function( who, item, pos )
                     gapi.add_msg(string.format(locale.gettext("Finished washing %d item(s)."), items_washed_count))
                 end
             end
-            return 1 -- Consumes a turn as the washing action/decision is complete
+            return 1 
         end
 
         -- An item line was selected, toggle its selection status
@@ -142,11 +153,8 @@ mod.iuse_wash_action = function( who, item, pos )
                 selected_item_object_set[toggled_item_obj] = true -- Select
             end
         else
-            -- This should not happen if current_loop_ui_key_to_item_map is built correctly
-            -- and eidx is a valid key from ui:query() that isn't the "Done" key.
-            gapi.add_msg(locale.gettext("Error: UI selection mismatch. Please try again or report this bug."))
+            gapi.add_msg(locale.gettext("Error: UI selection mismatch. Please report this bug."))
         end
-        -- The loop will continue, and the UI will be rebuilt with updated asterisks.
     end
 end
 
